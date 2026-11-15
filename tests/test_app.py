@@ -110,3 +110,14 @@ def test_cqa_failure_returns_502(client, monkeypatch):
     r = client.post("/api/ask", json={"question": "What is VNet?"})
     assert r.status_code == 502
     assert "error" in r.get_json()
+
+
+@pytest.mark.parametrize("junk", ['""', "???", "!", "a", "- -"])
+def test_junk_input_gives_fallback_without_calling_cqa(client, monkeypatch, junk):
+    calls = []
+    monkeypatch.setattr(appmod, "ask_cqa", fake_cqa(calls=calls, response={
+        "answers": [{"id": 7, "answer": "should not be shown", "confidenceScore": 0.33}]
+    }))
+    data = client.post("/api/ask", json={"question": junk}).get_json()
+    assert data["found"] is False
+    assert calls == []
