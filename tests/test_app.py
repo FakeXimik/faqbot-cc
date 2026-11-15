@@ -1,4 +1,3 @@
-"""Tests for the FAQ bot backend. CQA is replaced by a fake, so no Azure key is needed."""
 import pytest
 import requests
 
