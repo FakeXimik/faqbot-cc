@@ -27,6 +27,12 @@ def test_health(client):
     assert r.data == b"ok"
 
 
+def test_index_serves_chat_page(client):
+    r = client.get("/")
+    assert r.status_code == 200
+    assert b"Cloud Computing FAQ" in r.data
+
+
 def test_empty_question_rejected(client):
     r = client.post("/api/ask", json={"question": "   "})
     assert r.status_code == 400
