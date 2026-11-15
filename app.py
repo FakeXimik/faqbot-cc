@@ -26,7 +26,7 @@ def ask_cqa(body):
 
 @app.get("/")
 def index():
-    return "FAQ bot: hosting works"
+    return app.send_static_file("index.html")
 
 
 @app.get("/health")
