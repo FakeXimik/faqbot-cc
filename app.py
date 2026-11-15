@@ -46,6 +46,11 @@ def api_ask():
     if len(question) > 500:
         return jsonify(error="Question is too long (max 500 characters)"), 400
 
+    # Input with fewer than 2 letters/digits (e.g. '""', '???') is not a real
+    # question; CQA can still fuzzy-match it, so answer with the fallback directly.
+    if qna_id is None and sum(c.isalnum() for c in question) < 2:
+        return jsonify(found=False, message=FALLBACK)
+
     body = {"top": 3, "confidenceScoreThreshold": THRESHOLD}
     if qna_id is not None:
         body["qnaId"] = int(qna_id)
