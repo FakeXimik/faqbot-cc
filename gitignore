@@ -2,3 +2,6 @@
 __pycache__/
 *.zip
 .venv/
+infra/terraform.tfvars
+infra/.terraform/
+infra/*.tfstate*
