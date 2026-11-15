@@ -10,8 +10,8 @@ PROJECT = os.environ.get("CQA_PROJECT_NAME", "")
 DEPLOYMENT = os.environ.get("CQA_DEPLOYMENT_NAME", "production")
 THRESHOLD = float(os.environ.get("CONFIDENCE_THRESHOLD", "0.25"))
 
-FALLBACK = ("Я не нашёл ответа в материалах курса. "
-            "Попробуйте переформулировать вопрос, например: «Что такое VNet?»")
+FALLBACK = ("I couldn't find an answer in the course materials. "
+            "Try rephrasing your question, for example: \"What is a VNet?\"")
 
 
 def ask_cqa(body):
@@ -42,9 +42,9 @@ def api_ask():
     prev_id = data.get("previousQnaId")
 
     if not question and qna_id is None:
-        return jsonify(error="Пустой вопрос"), 400
+        return jsonify(error="Question is empty"), 400
     if len(question) > 500:
-        return jsonify(error="Вопрос слишком длинный"), 400
+        return jsonify(error="Question is too long (max 500 characters)"), 400
 
     body = {"top": 3, "confidenceScoreThreshold": THRESHOLD}
     if qna_id is not None:
@@ -58,7 +58,7 @@ def api_ask():
         result = ask_cqa(body)
     except requests.RequestException as e:
         app.logger.error("CQA error: %s", e)
-        return jsonify(error="Сервис ответов временно недоступен"), 502
+        return jsonify(error="The answer service is temporarily unavailable"), 502
 
     answers = result.get("answers", [])
     best = answers[0] if answers else None
